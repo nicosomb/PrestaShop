@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ec991e6f7b7ae6fc3d777ab6b9185c2b",
+    "content-hash": "b7372fb3657ccc7fe786aa799ae615ab",
     "packages": [
         {
             "name": "beberlei/doctrineextensions",
@@ -196,39 +196,37 @@
         },
         {
             "name": "composer/installers",
-            "version": "v1.12.0",
+            "version": "v2.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/installers.git",
-                "reference": "d20a64ed3c94748397ff5973488761b22f6d3f19"
+                "reference": "c29dc4b93137acb82734f672c37e029dfbd95b35"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/installers/zipball/d20a64ed3c94748397ff5973488761b22f6d3f19",
-                "reference": "d20a64ed3c94748397ff5973488761b22f6d3f19",
+                "url": "https://api.github.com/repos/composer/installers/zipball/c29dc4b93137acb82734f672c37e029dfbd95b35",
+                "reference": "c29dc4b93137acb82734f672c37e029dfbd95b35",
                 "shasum": ""
             },
             "require": {
-                "composer-plugin-api": "^1.0 || ^2.0"
-            },
-            "replace": {
-                "roundcube/plugin-installer": "*",
-                "shama/baton": "*"
+                "composer-plugin-api": "^1.0 || ^2.0",
+                "php": "^7.2 || ^8.0"
             },
             "require-dev": {
                 "composer/composer": "1.6.* || ^2.0",
                 "composer/semver": "^1 || ^3",
                 "phpstan/phpstan": "^0.12.55",
                 "phpstan/phpstan-phpunit": "^0.12.16",
-                "symfony/phpunit-bridge": "^4.2 || ^5",
-                "symfony/process": "^2.3"
+                "symfony/phpunit-bridge": "^5.3",
+                "symfony/process": "^5"
             },
             "type": "composer-plugin",
             "extra": {
                 "class": "Composer\\Installers\\Plugin",
                 "branch-alias": {
-                    "dev-main": "1.x-dev"
-                }
+                    "dev-main": "2.x-dev"
+                },
+                "plugin-modifies-install-path": true
             },
             "autoload": {
                 "psr-4": {
@@ -249,7 +247,6 @@
             "description": "A multi-framework Composer library installer",
             "homepage": "https://composer.github.io/installers/",
             "keywords": [
-                "Craft",
                 "Dolibarr",
                 "Eliasis",
                 "Hurad",
@@ -270,7 +267,6 @@
                 "Whmcs",
                 "WolfCMS",
                 "agl",
-                "aimeos",
                 "annotatecms",
                 "attogram",
                 "bitrix",
@@ -289,7 +285,6 @@
                 "grav",
                 "installer",
                 "itop",
-                "joomla",
                 "known",
                 "kohana",
                 "laravel",
@@ -298,6 +293,7 @@
                 "magento",
                 "majima",
                 "mako",
+                "matomo",
                 "mediawiki",
                 "miaoxing",
                 "modulework",
@@ -317,9 +313,7 @@
                 "silverstripe",
                 "sydes",
                 "sylius",
-                "symfony",
                 "tastyigniter",
-                "typo3",
                 "wordpress",
                 "yawik",
                 "zend",
@@ -327,7 +321,7 @@
             ],
             "support": {
                 "issues": "https://github.com/composer/installers/issues",
-                "source": "https://github.com/composer/installers/tree/v1.12.0"
+                "source": "https://github.com/composer/installers/tree/v2.2.0"
             },
             "funding": [
                 {
@@ -343,7 +337,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-09-13T08:19:44+00:00"
+            "time": "2022-08-20T06:45:11+00:00"
         },
         {
             "name": "cssjanus/cssjanus",
@@ -12562,5 +12556,5 @@
     "platform-overrides": {
         "php": "7.2.5"
     },
-    "plugin-api-version": "2.2.0"
+    "plugin-api-version": "2.3.0"
 }
