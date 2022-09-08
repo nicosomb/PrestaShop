@@ -125,7 +125,7 @@
         "prestashop/statssearch": "^2",
         "prestashop/statsstock": "^2",
         "prestashop/translationtools-bundle": "^5.0",
-        "sensio/framework-extra-bundle": "^5.1",
+        "sensio/framework-extra-bundle": "^6.2",
         "smarty/smarty": "^4.1.0",
         "soundasleep/html2text": "^0.5.0",
         "swiftmailer/swiftmailer": "~6.2",
