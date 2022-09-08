@@ -5569,16 +5569,16 @@
         },
         {
             "name": "prestashop/ps_customersignin",
-            "version": "v2.0.4",
+            "version": "v2.0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PrestaShop/ps_customersignin.git",
-                "reference": "a7c1ebb033bf893a057438121b4c664c5f6cc3cf"
+                "reference": "88016f3c1b4ba61a3f881bb295fefe4eef7edc92"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PrestaShop/ps_customersignin/zipball/a7c1ebb033bf893a057438121b4c664c5f6cc3cf",
-                "reference": "a7c1ebb033bf893a057438121b4c664c5f6cc3cf",
+                "url": "https://api.github.com/repos/PrestaShop/ps_customersignin/zipball/88016f3c1b4ba61a3f881bb295fefe4eef7edc92",
+                "reference": "88016f3c1b4ba61a3f881bb295fefe4eef7edc92",
                 "shasum": ""
             },
             "require": {
@@ -5606,9 +5606,9 @@
             "description": "PrestaShop - Customer 'Sign in' link",
             "homepage": "https://github.com/PrestaShop/ps_customersignin",
             "support": {
-                "source": "https://github.com/PrestaShop/ps_customersignin/tree/v2.0.4"
+                "source": "https://github.com/PrestaShop/ps_customersignin/tree/v2.0.5"
             },
-            "time": "2021-02-08T09:21:08+00:00"
+            "time": "2022-08-16T19:43:00+00:00"
         },
         {
             "name": "prestashop/ps_customtext",
@@ -12562,5 +12562,5 @@
     "platform-overrides": {
         "php": "7.2.5"
     },
-    "plugin-api-version": "2.2.0"
+    "plugin-api-version": "2.3.0"
 }
