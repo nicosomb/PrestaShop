@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "161600723290f85495bf2507fd602dd6",
+    "content-hash": "17d95c20bfc5a41a7f2217740d2aa7a7",
     "packages": [
         {
             "name": "api-platform/core",
@@ -6357,16 +6357,16 @@
         },
         {
             "name": "prestashop/ps_facetedsearch",
-            "version": "v3.14.1",
+            "version": "v3.15.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PrestaShop/ps_facetedsearch.git",
-                "reference": "3c2b733cee671d021219aff286129c10fa54334f"
+                "reference": "5e06b7eedc5d0e28555e2fbf5cf9b070747e4e60"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PrestaShop/ps_facetedsearch/zipball/3c2b733cee671d021219aff286129c10fa54334f",
-                "reference": "3c2b733cee671d021219aff286129c10fa54334f",
+                "url": "https://api.github.com/repos/PrestaShop/ps_facetedsearch/zipball/5e06b7eedc5d0e28555e2fbf5cf9b070747e4e60",
+                "reference": "5e06b7eedc5d0e28555e2fbf5cf9b070747e4e60",
                 "shasum": ""
             },
             "require": {
@@ -6402,9 +6402,9 @@
             "description": "PrestaShop module ps_facetedsearch",
             "homepage": "https://github.com/PrestaShop/ps_facetedsearch",
             "support": {
-                "source": "https://github.com/PrestaShop/ps_facetedsearch/tree/v3.14.1"
+                "source": "https://github.com/PrestaShop/ps_facetedsearch/tree/v3.15.1"
             },
-            "time": "2023-11-20T12:06:04+00:00"
+            "time": "2024-03-01T09:51:40+00:00"
         },
         {
             "name": "prestashop/ps_faviconnotificationbo",
@@ -17989,5 +17989,5 @@
     "platform-overrides": {
         "php": "8.1.0"
     },
-    "plugin-api-version": "2.2.0"
+    "plugin-api-version": "2.6.0"
 }
