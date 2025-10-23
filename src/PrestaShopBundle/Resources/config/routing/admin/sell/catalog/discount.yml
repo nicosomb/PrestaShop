@@ -62,3 +62,12 @@ admin_discounts_delete:
       id_cart_rule: discountId
   requirements:
     discountId: \d+
+
+admin_all_customer_groups:
+  path: /all-customer-groups
+  methods: [ GET ]
+  options:
+    expose: true
+  defaults:
+    _controller: 'PrestaShopBundle\Controller\Admin\Sell\Catalog\DiscountController::getAllCustomerGroupsAction'
+    _legacy_controller: AdminCartRules

@@ -27,11 +27,13 @@
 namespace PrestaShop\PrestaShop\Core\Form\IdentifiableObject\OptionProvider;
 
 use PrestaShop\PrestaShop\Adapter\Discount\Repository\DiscountTypeRepository;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class DiscountFormOptionsProvider implements FormOptionsProviderInterface
 {
     public function __construct(
-        private readonly DiscountTypeRepository $discountTypeRepository
+        private readonly DiscountTypeRepository $discountTypeRepository,
+        private readonly UrlGeneratorInterface $router,
     ) {
     }
 
@@ -40,6 +42,7 @@ class DiscountFormOptionsProvider implements FormOptionsProviderInterface
         return [
             'discount_type' => $data['information']['discount_type'] ?? '',
             'available_cart_rule_types' => $this->discountTypeRepository->getAllActiveTypes(),
+            'customer_groups_url' => $this->router->generate('admin_all_customer_groups'),
         ];
     }
 
@@ -47,6 +50,7 @@ class DiscountFormOptionsProvider implements FormOptionsProviderInterface
     {
         return [
             'available_cart_rule_types' => $this->discountTypeRepository->getAllActiveTypes(),
+            'customer_groups_url' => $this->router->generate('admin_all_customer_groups'),
         ];
     }
 }

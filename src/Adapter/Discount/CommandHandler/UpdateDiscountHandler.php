@@ -27,6 +27,7 @@
 namespace PrestaShop\PrestaShop\Adapter\Discount\CommandHandler;
 
 use PrestaShop\PrestaShop\Adapter\Discount\Repository\DiscountRepository;
+use PrestaShop\PrestaShop\Adapter\Discount\Update\DiscountUsabilityUpdater;
 use PrestaShop\PrestaShop\Adapter\Discount\Update\Filler\DiscountFiller;
 use PrestaShop\PrestaShop\Adapter\Discount\Validate\DiscountValidator;
 use PrestaShop\PrestaShop\Core\CommandBus\Attributes\AsCommandHandler;
@@ -41,6 +42,7 @@ class UpdateDiscountHandler implements UpdateDiscountCommandHandlerInterface
         private readonly DiscountRepository $discountRepository,
         private readonly DiscountFiller $discountFiller,
         private readonly DiscountValidator $discountValidator,
+        private readonly DiscountUsabilityUpdater $discountUsabilityUpdater,
     ) {
     }
 
@@ -50,6 +52,12 @@ class UpdateDiscountHandler implements UpdateDiscountCommandHandlerInterface
         $this->discountValidator->validateDiscountPropertiesForType($cartRule->getType(), $command);
 
         $updatableProperties = $this->discountFiller->fillUpdatableProperties($cartRule, $command);
+
+        // Update customer groups if specified
+        if ($command->getCustomerGroupIds() !== null) {
+            $groupUpdatedProperties = $this->discountUsabilityUpdater->updateCustomerGroups($cartRule, $command);
+            $updatableProperties = array_merge($updatableProperties, $groupUpdatedProperties);
+        }
 
         $this->discountRepository->partialUpdate(
             $cartRule,

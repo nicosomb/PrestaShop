@@ -28,10 +28,12 @@ namespace PrestaShop\PrestaShop\Adapter\Discount\CommandHandler;
 
 use PrestaShop\PrestaShop\Adapter\CartRule\CartRuleBuilder;
 use PrestaShop\PrestaShop\Adapter\Discount\Repository\DiscountRepository;
+use PrestaShop\PrestaShop\Adapter\Discount\Update\DiscountUsabilityUpdater;
 use PrestaShop\PrestaShop\Adapter\Discount\Validate\DiscountValidator;
 use PrestaShop\PrestaShop\Core\CommandBus\Attributes\AsCommandHandler;
 use PrestaShop\PrestaShop\Core\Domain\Discount\Command\AddDiscountCommand;
 use PrestaShop\PrestaShop\Core\Domain\Discount\CommandHandler\AddDiscountHandlerInterface;
+use PrestaShop\PrestaShop\Core\Domain\Discount\Exception\CannotUpdateDiscountException;
 use PrestaShop\PrestaShop\Core\Domain\Discount\Exception\DiscountConstraintException;
 use PrestaShop\PrestaShop\Core\Domain\Discount\ValueObject\DiscountId;
 
@@ -42,6 +44,7 @@ class AddDiscountHandler implements AddDiscountHandlerInterface
         private readonly DiscountRepository $discountRepository,
         private readonly CartRuleBuilder $cartRuleBuilder,
         private readonly DiscountValidator $discountValidator,
+        private readonly DiscountUsabilityUpdater $discountUsabilityUpdater,
     ) {
     }
 
@@ -54,6 +57,16 @@ class AddDiscountHandler implements AddDiscountHandlerInterface
         $this->discountValidator->validateDiscountPropertiesForType($discountType, $command);
         $BuiltCartRule = $this->cartRuleBuilder->build($command);
         $discount = $this->discountRepository->add($BuiltCartRule);
+
+        // Update customer groups if specified
+        $updatedProperties = $this->discountUsabilityUpdater->updateCustomerGroups($discount, $command);
+        if (!empty($updatedProperties)) {
+            $this->discountRepository->partialUpdate(
+                $discount,
+                $updatedProperties,
+                CannotUpdateDiscountException::FAILED_UPDATE_DISCOUNT
+            );
+        }
 
         return new DiscountId((int) $discount->id);
     }

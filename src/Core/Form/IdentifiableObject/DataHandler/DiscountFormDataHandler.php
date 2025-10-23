@@ -294,7 +294,7 @@ class DiscountFormDataHandler implements FormDataHandlerInterface
     }
 
     /**
-     * Handle customer eligibility and set customer ID on the command if needed.
+     * Handle customer eligibility and set customer ID or customer group IDs on the command if needed.
      *
      * @param AddDiscountCommand|UpdateDiscountCommand $command
      * @param array $data
@@ -308,11 +308,47 @@ class DiscountFormDataHandler implements FormDataHandlerInterface
         $customerEligibility = $data['usability']['customer_eligibility'];
         $selectedOption = $customerEligibility['children_selector'] ?? DiscountCustomerEligibilityType::ALL_CUSTOMERS;
 
-        if ($selectedOption === DiscountCustomerEligibilityType::SINGLE_CUSTOMER) {
+        if ($selectedOption === DiscountCustomerEligibilityType::CUSTOMER_GROUPS) {
+            $groupIds = $this->extractCustomerGroupIds($customerEligibility[DiscountCustomerEligibilityType::CUSTOMER_GROUPS] ?? []);
+            // Always set group IDs even if empty - this allows clearing all groups
+            $command->setCustomerGroupIds($groupIds);
+        } elseif ($selectedOption === DiscountCustomerEligibilityType::SINGLE_CUSTOMER) {
             $customerData = $customerEligibility[DiscountCustomerEligibilityType::SINGLE_CUSTOMER] ?? [];
             if (!empty($customerData) && isset($customerData[0]['id_customer'])) {
                 $command->setCustomerId((int) $customerData[0]['id_customer']);
             }
+            // Clear customer groups when switching to single customer mode
+            $command->setCustomerGroupIds([]);
+        } elseif ($selectedOption === DiscountCustomerEligibilityType::ALL_CUSTOMERS) {
+            // Clear customer groups when switching to all customers mode
+            $command->setCustomerGroupIds([]);
         }
+    }
+
+    /**
+     * Extract customer group IDs from the grouped structure.
+     *
+     * @param array $groupedData
+     *
+     * @return int[]
+     */
+    private function extractCustomerGroupIds(array $groupedData): array
+    {
+        $groupIds = [];
+
+        // The data comes in the format: ['groups' => [1 => ['items' => [['id' => 3], ['id' => 2]]]]]
+        if (isset($groupedData['groups']) && is_array($groupedData['groups'])) {
+            foreach ($groupedData['groups'] as $group) {
+                if (isset($group['items']) && is_array($group['items'])) {
+                    foreach ($group['items'] as $item) {
+                        if (isset($item['id'])) {
+                            $groupIds[] = (int) $item['id'];
+                        }
+                    }
+                }
+            }
+        }
+
+        return $groupIds;
     }
 }

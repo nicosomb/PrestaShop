@@ -52,6 +52,7 @@ class AddDiscountCommand
     private string $description = '';
     private string $code = '';
     private ?CustomerId $customerId = null;
+    private array $customerGroupIds = [];
     private bool $highlightInCart = false;
     private bool $allowPartialUse = true;
     private DiscountType $type;
@@ -242,6 +243,24 @@ class AddDiscountCommand
     public function setCustomerId(int $customerId): self
     {
         $this->customerId = new CustomerId($customerId);
+
+        return $this;
+    }
+
+    /**
+     * @return int[]
+     */
+    public function getCustomerGroupIds(): array
+    {
+        return $this->customerGroupIds;
+    }
+
+    /**
+     * @param int[] $customerGroupIds
+     */
+    public function setCustomerGroupIds(array $customerGroupIds): self
+    {
+        $this->customerGroupIds = $customerGroupIds;
 
         return $this;
     }

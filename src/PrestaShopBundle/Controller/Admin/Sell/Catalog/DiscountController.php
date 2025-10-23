@@ -27,6 +27,7 @@
 namespace PrestaShopBundle\Controller\Admin\Sell\Catalog;
 
 use Exception;
+use Group;
 use PrestaShop\PrestaShop\Core\Domain\CartRule\Command\ToggleCartRuleStatusCommand;
 use PrestaShop\PrestaShop\Core\Domain\CartRule\Exception\CartRuleException;
 use PrestaShop\PrestaShop\Core\Domain\Discount\Command\DeleteDiscountCommand;
@@ -42,6 +43,7 @@ use PrestaShopBundle\Form\Admin\Sell\Discount\DiscountTypeSelectorType;
 use PrestaShopBundle\Security\Attribute\AdminSecurity;
 use PrestaShopBundle\Security\Attribute\DemoRestricted;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -230,6 +232,43 @@ class DiscountController extends PrestaShopAdminController
         }
 
         return $this->redirectToRoute('admin_discounts_index');
+    }
+
+    /**
+     * Get all customer groups formatted for the grouped-item-collection component.
+     * Since customer groups don't have a parent group concept, we create a single "group"
+     * containing all customer groups as items.
+     *
+     * @return JsonResponse
+     */
+    #[AdminSecurity("is_granted('read', request.get('_legacy_controller'))", message: 'Access denied.')]
+    public function getAllCustomerGroupsAction(): JsonResponse
+    {
+        $languageId = $this->getLanguageContext()->getId();
+        $groups = Group::getGroups($languageId, true);
+
+        // Format as a single "group" containing all customer groups as items
+        $itemGroup = [
+            'id' => 1,
+            'name' => $this->trans('Customer Groups', [], 'Admin.Shopparameters.Feature'),
+            'items' => [],
+        ];
+
+        foreach ($groups as $group) {
+            $groupId = (int) $group['id_group'];
+
+            $itemGroup['items'][] = [
+                'id' => $groupId,
+                'name' => $group['name'],
+                'selected' => false,
+                'groupId' => 1,
+                'groupName' => $itemGroup['name'],
+                'color' => null,
+                'texture' => null,
+            ];
+        }
+
+        return $this->json([$itemGroup]);
     }
 
     private function getErrorMessages(Exception $e): array

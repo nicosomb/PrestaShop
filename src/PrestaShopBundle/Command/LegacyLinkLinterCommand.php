@@ -56,6 +56,7 @@ class LegacyLinkLinterCommand extends Command
         'admin_administration_upload_quota_save',
         'admin_alias_search_search_term_action',
         'admin_all_attribute_groups',
+        'admin_all_customer_groups',
         'admin_attribute_groups_update_position',
         'admin_backup_download',
         'admin_backups_download_view',

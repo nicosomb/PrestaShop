@@ -28,11 +28,13 @@ namespace PrestaShopBundle\Form\Admin\Sell\Discount;
 
 use PrestaShopBundle\Form\Admin\Type\CustomerSearchType;
 use PrestaShopBundle\Form\Admin\Type\EntitySearchInputType;
+use PrestaShopBundle\Form\Admin\Type\GroupedItemCollectionType;
 use PrestaShopBundle\Form\Admin\Type\ToggleChildrenChoiceType;
 use PrestaShopBundle\Form\Admin\Type\TranslatorAwareType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Count;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\When;
 
@@ -48,11 +50,33 @@ class DiscountCustomerEligibilityType extends TranslatorAwareType
             ->add(self::ALL_CUSTOMERS, HiddenType::class, [
                 'label' => $this->trans('All customers', 'Admin.Catalog.Feature'),
             ])
-            ->add(self::CUSTOMER_GROUPS, HiddenType::class, [
+            ->add(self::CUSTOMER_GROUPS, GroupedItemCollectionType::class, [
                 'label' => $this->trans('Customer groups', 'Admin.Catalog.Feature'),
-                'disabled' => true,
+                'required' => false,
+                'select_button_label' => $this->trans('Select customer groups', 'Admin.Catalog.Feature'),
+                'modal_title' => $this->trans('Select customer groups', 'Admin.Catalog.Feature'),
+                'modal_search_placeholder' => $this->trans('Search for customer group...', 'Admin.Catalog.Feature'),
+                'modal_select_label' => $this->trans('Select {selectedItemsNb} customer group(s)', 'Admin.Catalog.Feature'),
+                'modal_loading' => $this->trans('Loading customer groups', 'Admin.Catalog.Feature'),
                 'attr' => [
-                    'class' => 'js-customer-groups-placeholder',
+                    'data-grouped-item-collection-url' => $options['customer_groups_url'],
+                ],
+                'constraints' => [
+                    new When(
+                        expression: sprintf(
+                            'this.getParent().get("children_selector").getData() === "%s"',
+                            self::CUSTOMER_GROUPS,
+                        ),
+                        constraints: [
+                            new Count([
+                                'min' => 1,
+                                'minMessage' => $this->trans(
+                                    'Please select at least one group.',
+                                    'Admin.Catalog.Notification'
+                                ),
+                            ]),
+                        ],
+                    ),
                 ],
             ])
             ->add(self::SINGLE_CUSTOMER, CustomerSearchType::class, [
@@ -84,7 +108,9 @@ class DiscountCustomerEligibilityType extends TranslatorAwareType
         parent::configureOptions($resolver);
         $resolver->setDefaults([
             'required' => false,
+            'customer_groups_url' => '',
         ]);
+        $resolver->setRequired(['customer_groups_url']);
     }
 
     public function getParent()

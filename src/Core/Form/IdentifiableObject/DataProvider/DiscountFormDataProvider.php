@@ -26,6 +26,7 @@
 
 namespace PrestaShop\PrestaShop\Core\Form\IdentifiableObject\DataProvider;
 
+use Group;
 use PrestaShop\PrestaShop\Adapter\Attribute\Repository\AttributeRepository;
 use PrestaShop\PrestaShop\Adapter\Customer\Repository\CustomerRepository;
 use PrestaShop\PrestaShop\Adapter\Discount\Repository\DiscountTypeRepository;
@@ -90,6 +91,7 @@ class DiscountFormDataProvider implements FormDataProviderInterface
                 ],
                 'customer_eligibility' => [
                     'children_selector' => DiscountCustomerEligibilityType::ALL_CUSTOMERS,
+                    DiscountCustomerEligibilityType::CUSTOMER_GROUPS => ['groups' => []],
                     DiscountCustomerEligibilityType::SINGLE_CUSTOMER => [],
                 ],
             ],
@@ -407,10 +409,22 @@ class DiscountFormDataProvider implements FormDataProviderInterface
     private function getCustomerEligibilityData(DiscountForEditing $discountForEditing): array
     {
         $customerId = $discountForEditing->getCustomerId();
+        $customerGroupIds = $discountForEditing->getCustomerGroupIds();
 
+        // Check for customer groups first
+        if (!empty($customerGroupIds)) {
+            return [
+                'children_selector' => DiscountCustomerEligibilityType::CUSTOMER_GROUPS,
+                DiscountCustomerEligibilityType::CUSTOMER_GROUPS => $this->formatCustomerGroupsForForm($customerGroupIds),
+                DiscountCustomerEligibilityType::SINGLE_CUSTOMER => [],
+            ];
+        }
+
+        // Then check for single customer
         if (!$customerId) {
             return [
                 'children_selector' => DiscountCustomerEligibilityType::ALL_CUSTOMERS,
+                DiscountCustomerEligibilityType::CUSTOMER_GROUPS => ['groups' => []],
                 DiscountCustomerEligibilityType::SINGLE_CUSTOMER => [],
             ];
         }
@@ -420,6 +434,7 @@ class DiscountFormDataProvider implements FormDataProviderInterface
         } catch (CustomerNotFoundException $e) {
             return [
                 'children_selector' => DiscountCustomerEligibilityType::ALL_CUSTOMERS,
+                DiscountCustomerEligibilityType::CUSTOMER_GROUPS => ['groups' => []],
                 DiscountCustomerEligibilityType::SINGLE_CUSTOMER => [],
             ];
         }
@@ -433,10 +448,54 @@ class DiscountFormDataProvider implements FormDataProviderInterface
 
         return [
             'children_selector' => DiscountCustomerEligibilityType::SINGLE_CUSTOMER,
+            DiscountCustomerEligibilityType::CUSTOMER_GROUPS => ['groups' => []],
             DiscountCustomerEligibilityType::SINGLE_CUSTOMER => [
                 [
                     'id_customer' => $customerId,
                     'fullname_and_email' => $fullnameAndEmail,
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * Format customer group IDs into the grouped structure expected by GroupedItemCollectionType.
+     * Since customer groups are flat (no parent groups), we wrap them in a single group.
+     *
+     * @param int[] $customerGroupIds
+     *
+     * @return array
+     */
+    private function formatCustomerGroupsForForm(array $customerGroupIds): array
+    {
+        if (empty($customerGroupIds)) {
+            return ['groups' => []];
+        }
+
+        // Get group names for the selected IDs
+        $groups = Group::getGroups($this->languageContext->getId(), true);
+        $groupsById = [];
+        foreach ($groups as $group) {
+            $groupsById[(int) $group['id_group']] = $group['name'];
+        }
+
+        // Format as a single "group" containing all selected customer groups as items
+        $items = [];
+        foreach ($customerGroupIds as $groupId) {
+            if (isset($groupsById[$groupId])) {
+                $items[] = [
+                    'id' => $groupId,
+                    'name' => $groupsById[$groupId],
+                ];
+            }
+        }
+
+        return [
+            'groups' => [
+                1 => [
+                    'id' => 1,
+                    'name' => 'Customer Groups',
+                    'items' => $items,
                 ],
             ],
         ];

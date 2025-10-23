@@ -94,6 +94,7 @@ class DiscountType extends TranslatorAwareType
         $builder
             ->add('usability', DiscountUsabilityType::class, [
                 'label' => $this->trans('Usability conditions', 'Admin.Catalog.Feature'),
+                'customer_groups_url' => $options['customer_groups_url'],
             ]);
     }
 
@@ -104,9 +105,11 @@ class DiscountType extends TranslatorAwareType
             'label' => false,
             'form_theme' => '@PrestaShop/Admin/TwigTemplateForm/prestashop_ui_kit_base.html.twig',
             'available_cart_rule_types' => [],
+            'customer_groups_url' => '',
         ]);
         $resolver->setRequired([
             'discount_type',
+            'customer_groups_url',
         ]);
         $resolver->setAllowedTypes('discount_type', ['string']);
         $resolver->setAllowedTypes('available_cart_rule_types', ['array']);

@@ -156,6 +156,21 @@ class DiscountFeatureContext extends AbstractDomainFeatureContext
             $command->setCustomerId($this->getSharedStorage()->get($data['customer']));
         }
 
+        if (isset($data['customer_groups'])) {
+            // customer_groups is not a localized field, but localizeByRows may have processed it
+            // Extract the actual value if it's been wrapped in an array
+            $customerGroupsValue = $data['customer_groups'];
+            if (is_array($customerGroupsValue)) {
+                // Get the first non-empty value from the array, or empty string if all are empty
+                $customerGroupsValue = trim(implode(',', array_filter($customerGroupsValue)));
+            }
+
+            if (!empty($customerGroupsValue)) {
+                $groupIds = $this->referencesToIds($customerGroupsValue);
+                $command->setCustomerGroupIds($groupIds);
+            }
+        }
+
         if ($command->getDiscountType()->getValue() === DiscountType::CART_LEVEL
             || $command->getDiscountType()->getValue() === DiscountType::PRODUCT_LEVEL
             || $command->getDiscountType()->getValue() === DiscountType::ORDER_LEVEL
@@ -255,6 +270,24 @@ class DiscountFeatureContext extends AbstractDomainFeatureContext
             } else {
                 // Empty string means remove customer restriction
                 $command->setCustomerId(0);
+            }
+        }
+
+        if (isset($data['customer_groups'])) {
+            // customer_groups is not a localized field, but localizeByRows may have processed it
+            // Extract the actual value if it's been wrapped in an array
+            $customerGroupsValue = $data['customer_groups'];
+            if (is_array($customerGroupsValue)) {
+                // Get the first non-empty value from the array, or empty string if all are empty
+                $customerGroupsValue = trim(implode(',', array_filter($customerGroupsValue)));
+            }
+
+            if (!empty($customerGroupsValue)) {
+                $groupIds = $this->referencesToIds($customerGroupsValue);
+                $command->setCustomerGroupIds($groupIds);
+            } else {
+                // Empty string means remove customer groups restriction
+                $command->setCustomerGroupIds([]);
             }
         }
 
@@ -358,6 +391,31 @@ class DiscountFeatureContext extends AbstractDomainFeatureContext
                 $expectedCustomerId,
                 $actualCustomerId,
                 'Unexpected customer id'
+            );
+        }
+
+        if (isset($expectedData['customer_groups'])) {
+            // customer_groups is not a localized field, but localizeByRows may have processed it
+            // Extract the actual value if it's been wrapped in an array
+            $customerGroupsValue = $expectedData['customer_groups'];
+            if (is_array($customerGroupsValue)) {
+                // Get the first non-empty value from the array, or empty string if all are empty
+                $customerGroupsValue = trim(implode(',', array_filter($customerGroupsValue)));
+            }
+
+            // Handle empty string or array of empty values
+            if (empty($customerGroupsValue)) {
+                $expectedGroupIds = [];
+            } else {
+                $expectedGroupIds = $this->referencesToIds($customerGroupsValue);
+            }
+            $actualGroupIds = $discountForEditing->getCustomerGroupIds();
+            sort($expectedGroupIds);
+            sort($actualGroupIds);
+            Assert::assertSame(
+                $expectedGroupIds,
+                $actualGroupIds,
+                'Unexpected customer group ids'
             );
         }
         if (isset($expectedData['priority'])) {

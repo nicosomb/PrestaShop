@@ -28,7 +28,7 @@ import DiscountMap from '@pages/discount/discount-map';
 import CreateFreeGiftDiscount from '@pages/discount/form/create-free-gift-discount';
 import SpecificProducts from '@pages/discount/form/specific-products';
 import initGroupedItemCollection from '@PSVue/components/grouped-item-collection';
-import {getAllAttributeGroups, getAllFeatureGroups} from '@pages/discount/form/services';
+import {getAllAttributeGroups, getAllFeatureGroups, getAllCustomerGroups} from '@pages/discount/form/services';
 import CustomerSearchInput from '@components/form/customer-search-input';
 
 $(() => {
@@ -72,6 +72,9 @@ $(() => {
 
   const {eventEmitter} = window.prestashop.instance;
 
+  // Track if customer groups component has been initialized
+  let customerGroupsInitialized = false;
+
   eventEmitter.on('ToggleChildrenChoice:toggled', (radio: HTMLInputElement) => {
     // We need to trigger change those select2 elements because the component is not loaded when the page is displayed
     // if we don't trigger change them, the placeholder cannot be loaded correctly.
@@ -80,6 +83,27 @@ $(() => {
     }
     if (radio.value === 'carriers') {
       $(DiscountMap.carriersSelect).trigger('change');
+    }
+    
+    // Initialize customer groups component when it becomes visible
+    if (radio.value === 'customer_groups' && !customerGroupsInitialized) {
+      const customerGroupsSelector = '#discount_usability_customer_eligibility_customer_groups';
+      // Wait a bit for the DOM to be ready
+      setTimeout(() => {
+        const element = $(customerGroupsSelector);
+        console.log('Initializing customer groups component', {
+          selector: customerGroupsSelector,
+          elementFound: element.length > 0,
+          element: element[0],
+        });
+        if (element.length > 0) {
+          initGroupedItemCollection(customerGroupsSelector, getAllCustomerGroups);
+          customerGroupsInitialized = true;
+          console.log('Customer groups component initialized');
+        } else {
+          console.error('Customer groups element not found:', customerGroupsSelector);
+        }
+      }, 100);
     }
   });
 
@@ -118,4 +142,25 @@ $(() => {
 
   initGroupedItemCollection('#discount_conditions_cart_conditions_product_segment_attributes', getAllAttributeGroups);
   initGroupedItemCollection('#discount_conditions_cart_conditions_product_segment_features', getAllFeatureGroups);
+
+  // Check if customer_groups is already selected on page load (edit mode)
+  const customerGroupsRadio = document.querySelector<HTMLInputElement>(
+    'input[name="discount[usability][customer_eligibility][children_selector]"][value="customer_groups"]:checked'
+  );
+  if (customerGroupsRadio) {
+    const customerGroupsSelector = '#discount_usability_customer_eligibility_customer_groups';
+    console.log('Customer groups already selected on page load');
+    setTimeout(() => {
+      const element = $(customerGroupsSelector);
+      console.log('Initializing customer groups on page load', {
+        selector: customerGroupsSelector,
+        elementFound: element.length > 0,
+      });
+      if (element.length > 0) {
+        initGroupedItemCollection(customerGroupsSelector, getAllCustomerGroups);
+        customerGroupsInitialized = true;
+        console.log('Customer groups initialized on page load');
+      }
+    }, 100);
+  }
 });

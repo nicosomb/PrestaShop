@@ -54,6 +54,7 @@ class UpdateDiscountCommand
     private ?string $description = null;
     private ?string $code = null;
     private ?CustomerId $customerId = null;
+    private ?array $customerGroupIds = null;
     private ?bool $highlightInCart = null;
     private ?bool $allowPartialUse = null;
     private ?DecimalNumber $percentDiscount = null;
@@ -236,6 +237,24 @@ class UpdateDiscountCommand
     public function setCustomerId(int $customerId): self
     {
         $this->customerId = new CustomerId($customerId);
+
+        return $this;
+    }
+
+    /**
+     * @return int[]|null
+     */
+    public function getCustomerGroupIds(): ?array
+    {
+        return $this->customerGroupIds;
+    }
+
+    /**
+     * @param int[] $customerGroupIds
+     */
+    public function setCustomerGroupIds(array $customerGroupIds): self
+    {
+        $this->customerGroupIds = $customerGroupIds;
 
         return $this;
     }

@@ -29,6 +29,7 @@ namespace PrestaShopBundle\Form\Admin\Sell\Discount;
 use PrestaShopBundle\Form\Admin\Type\CardType;
 use PrestaShopBundle\Form\Admin\Type\TranslatorAwareType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class DiscountUsabilityType extends TranslatorAwareType
 {
@@ -44,8 +45,18 @@ class DiscountUsabilityType extends TranslatorAwareType
                 'label' => $this->trans('Select customer eligibility', 'Admin.Catalog.Feature'),
                 'label_tag_name' => 'h3',
                 'required' => false,
+                'customer_groups_url' => $options['customer_groups_url'],
             ])
         ;
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        parent::configureOptions($resolver);
+        $resolver->setDefaults([
+            'customer_groups_url' => '',
+        ]);
+        $resolver->setRequired(['customer_groups_url']);
     }
 
     public function getParent()

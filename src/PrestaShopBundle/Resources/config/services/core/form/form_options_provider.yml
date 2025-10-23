@@ -17,3 +17,4 @@ services:
     class: 'PrestaShop\PrestaShop\Core\Form\IdentifiableObject\OptionProvider\DiscountFormOptionsProvider'
     arguments:
       - '@PrestaShop\PrestaShop\Adapter\Discount\Repository\DiscountTypeRepository'
+      - '@router'

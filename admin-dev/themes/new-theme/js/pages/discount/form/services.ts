@@ -120,7 +120,53 @@ export const getAllFeatureGroups = async (): Promise<Array<ItemGroup>> => {
   return itemGroups;
 };
 
+interface CustomerGroup {
+  id: number;
+  name: string;
+  items: CustomerGroupItem[];
+}
+
+interface CustomerGroupItem {
+  id: number;
+  name: string;
+}
+
+/**
+ * Fetch all customer groups and convert them into ItemGroup/Item expected by the
+ * GroupedItemCollection component.
+ */
+export const getAllCustomerGroups = async (): Promise<Array<ItemGroup>> => {
+  const customerGroups: CustomerGroup[] = await $.get(router.generate('admin_all_customer_groups'));
+
+  const itemGroups: ItemGroup[] = [];
+
+  // Transform customer groups into ItemGroup
+  customerGroups.forEach((customerGroup: CustomerGroup) => {
+    const itemGroup: ItemGroup = {
+      id: customerGroup.id,
+      name: customerGroup.name,
+      items: [],
+    };
+    customerGroup.items.forEach((item: CustomerGroupItem) => {
+      const groupItem: Item = {
+        id: item.id,
+        name: item.name,
+        selected: false,
+        groupId: itemGroup.id,
+        groupName: itemGroup.name,
+        color: null,
+        texture: null,
+      };
+      itemGroup.items.push(groupItem);
+    });
+    itemGroups.push(itemGroup);
+  });
+
+  return itemGroups;
+};
+
 export default {
   getAllAttributeGroups,
   getAllFeatureGroups,
+  getAllCustomerGroups,
 };
