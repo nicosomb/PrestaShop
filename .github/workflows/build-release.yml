@@ -15,9 +15,6 @@ on:
       trigger_value:
         description: 'Tag name (8.2.1, 9.0.2), commit SHA or branch name (e.g. develop, 9.1.x)'
         required: true
-  push:
-    tags:
-      - '[0-9]*.[0-9]*.[0-9]*' # e.g. 8.2.1, 9.0.2, 9.1.0
 
 permissions:
   contents: read   #   to fetch code (actions/checkout)
@@ -72,20 +69,12 @@ jobs:
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "node_version=$NODE_VERSION" >> $GITHUB_OUTPUT
 
+      # Single checkout: this repo (PrestaShop once merged to develop) at the ref to build
       - uses: actions/checkout@v4
         with:
-          path: workflow-repo
-
-      - uses: actions/checkout@v4
-        with:
-          repository: PrestaShop/PrestaShop
           ref: ${{ steps.resolve.outputs.ref }}
           path: prestashop-src
           fetch-depth: 0
-
-      - name: Use workflow repo build tools
-        run: |
-          cp -r "${{ github.workspace }}/workflow-repo/tools/build" "${{ github.workspace }}/prestashop-src/tools/"
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -117,7 +106,7 @@ jobs:
           if [ -n "${{ steps.resolve.outputs.version }}" ]; then
             VERSION_ARG="--version=${{ steps.resolve.outputs.version }}"
           fi
-          php tools/build/CreateRelease.php --destination-dir="$RELEASE_DIR" $VERSION_ARG
+          php tools/build/CreateRelease.php --destination-dir="$RELEASE_DIR" --distribution=open_source $VERSION_ARG
 
       - name: List build artifacts
         run: |
