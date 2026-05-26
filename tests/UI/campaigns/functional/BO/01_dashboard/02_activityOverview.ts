@@ -731,17 +731,14 @@ describe('BO - Dashboard : Activity overview', async () => {
       expect(pageTitle).to.eq(boDashboardPage.pageTitle);
     });
 
-    // @todo : https://github.com/PrestaShop/PrestaShop/issues/37033
     it('should update the form', async function () {
       await testContext.addContextItem(this, 'testIdentifier', 'checkFormActivityOverview', baseContext);
 
       const isConfigureFormVisible = await boDashboardPage.clickOnConfigureActivityOverviewLink(page);
       expect(isConfigureFormVisible).to.eq(true);
 
-      this.skip();
-
       const numActiveCarts = parseInt(await boDashboardPage.getFormActivityOverviewValue(page, 'active_cart'), 10);
-      expect(numActiveCarts).to.equals(45);
+      expect(numActiveCarts).to.equals(30);
 
       const numOnlineVisitor = parseInt(await boDashboardPage.getFormActivityOverviewValue(page, 'online_visitor'), 10);
       expect(numOnlineVisitor).to.equals(45);
