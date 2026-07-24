@@ -6,6 +6,11 @@
 
 {% import _self as dashboard %}
 
+{% block javascripts %}
+  {{ parent() }}
+  <script src="{{ asset('themes/new-theme/public/chartjs.bundle.js') }}"></script>
+{% endblock %}
+
 {#
  # Placeholder shown when a single zone receives no content while others do.
  #}
