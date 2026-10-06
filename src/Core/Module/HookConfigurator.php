@@ -43,7 +43,7 @@ class HookConfigurator
 
         foreach ($currentHooks as $hookName => $moduleList) {
             foreach ($moduleList as $key => $value) {
-                if (in_array($value, $uniqueModuleList)) {
+                if (in_array($value, $uniqueModuleList, true)) {
                     unset($currentHooks[$hookName][$key]);
                 }
             }
